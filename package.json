@@ -1,0 +1,16 @@
+{
+  "name": "jslox",
+  "version": "1.0.0",
+  "main": "bin/index.js",
+  "type": "module",
+  "bin": { 
+    "jslox": "./bin/index.js"
+  },
+  "scripts": {
+    "dev": "node ./bin/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "JavaScript implementation of lox language from Crafting Interpreters book"
+}
