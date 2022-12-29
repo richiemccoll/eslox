@@ -7,10 +7,25 @@
     "jslox": "./bin/index.js"
   },
   "scripts": {
-    "dev": "node ./bin/index.js"
+    "dev": "node ./bin/index.js",
+    "prepare": "husky install",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "JavaScript implementation of lox language from Crafting Interpreters book"
+  "description": "JavaScript implementation of lox language from Crafting Interpreters book",
+  "devDependencies": {
+    "@commitlint/cli": "^17.3.0",
+    "@commitlint/config-conventional": "^17.3.0",
+    "eslint": "^8.30.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": "eslint --cache --fix"
+  }
 }
