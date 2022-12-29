@@ -134,7 +134,11 @@ export class Scanner {
         this.string()
         break
       default: {
-        this.onError(this.line, 'Unexpected character.')
+        if (this.isNumber(character)) {
+          this.number()
+        } else {
+          this.onError(this.line, 'Unexpected character.')
+        }
         break
       }
     }
@@ -201,5 +205,38 @@ export class Scanner {
     const value = this.source.substring(this.start + 1, this.current - 1)
 
     this.addToken(TokenType.STRING, value)
+  }
+
+  isNumber(char) {
+    return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(char)
+  }
+
+  number() {
+    while (this.isNumber(this.peek())) {
+      this.advance()
+    }
+
+    // Look for a fractional part.
+    if (this.peek() == '.' && this.isNumber(this.peekNext())) {
+      // Consume the "."
+      this.advance()
+    }
+
+    while (this.isNumber(this.peek())) {
+      this.advance()
+    }
+
+    this.addToken(
+      TokenType.NUMBER,
+      parseFloat(this.source.substring(this.start, this.current))
+    )
+  }
+
+  peekNext() {
+    if (this.current + 1 >= this.source.length) {
+      return '\0'
+    } else {
+      return this.source[this.current + 1]
+    }
   }
 }

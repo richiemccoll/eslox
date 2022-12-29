@@ -78,4 +78,38 @@ describe('JSLox - run()', () => {
       'type=eof lexeme=empty literal=undefined'
     ])
   })
+
+  it('run("1") should generate the correct token list', () => {
+    const res = jslox.run('1').map(token => token.toString())
+    expect(res).toEqual([
+      `type=num lexeme=1 literal=1`,
+      'type=eof lexeme=empty literal=undefined'
+    ])
+  })
+
+  it('run("120") should generate the correct token list', () => {
+    const res = jslox.run('120').map(token => token.toString())
+    expect(res).toEqual([
+      `type=num lexeme=120 literal=120`,
+      'type=eof lexeme=empty literal=undefined'
+    ])
+  })
+
+  it('run("120.50") should generate the correct token list', () => {
+    const res = jslox.run('120.50').map(token => token.toString())
+    expect(res).toEqual([
+      `type=num lexeme=120.50 literal=120.5`,
+      'type=eof lexeme=empty literal=undefined'
+    ])
+  })
+
+  it('run("test=120.50") should generate the correct token list', () => {
+    const res = jslox.run('"test"=120.50').map(token => token.toString())
+    expect(res).toEqual([
+      `type=str lexeme="test" literal=test`,
+      `type== lexeme== literal=undefined`,
+      `type=num lexeme=120.50 literal=120.5`,
+      'type=eof lexeme=empty literal=undefined'
+    ])
+  })
 })
