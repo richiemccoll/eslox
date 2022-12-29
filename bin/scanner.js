@@ -36,7 +36,6 @@ export class Scanner {
 
   scanToken() {
     const character = this.advance()
-
     switch (character) {
       case '(': {
         this.addToken(TokenType.LEFT_PAREN)
@@ -113,7 +112,8 @@ export class Scanner {
       case '/': {
         // a comment continues to the end of the line.
         if (this.match('/')) {
-          while (this.peek() != '\n' && !this.isAtEnd()) {
+          const isNewLine = this.peek() == '\n'
+          while (!isNewLine && !this.isAtEnd()) {
             this.advance()
           }
         } else {
@@ -123,15 +123,19 @@ export class Scanner {
       }
       case ' ':
       case '\r':
-      case '\t':
+      case '\t': {
         // Ignore whitespace.
         break
-
+      }
       case '\n':
         this.line++
         break
+      case '"':
+        this.string()
+        break
       default: {
         this.onError(this.line, 'Unexpected character.')
+        break
       }
     }
   }
@@ -175,5 +179,27 @@ export class Scanner {
     } else {
       return this.source[this.current]
     }
+  }
+
+  string() {
+    while (this.peek() != '"' && !this.isAtEnd()) {
+      if (this.peek() == '\n') {
+        this.line++
+      }
+      this.advance()
+    }
+
+    if (this.isAtEnd()) {
+      this.onError(this.line, 'Unterminated string')
+      return
+    }
+
+    // Handle the closing ".
+    this.advance()
+
+    // Trim the surrounding quotes.
+    const value = this.source.substring(this.start + 1, this.current - 1)
+
+    this.addToken(TokenType.STRING, value)
   }
 }
