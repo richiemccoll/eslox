@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "main": "bin/index.js",
   "type": "module",
-  "bin": { 
+  "bin": {
     "jslox": "./bin/index.js"
   },
   "scripts": {
     "dev": "node ./bin/index.js",
     "prepare": "husky install",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -18,12 +20,14 @@
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
+    "@vitest/coverage-c8": "^0.26.2",
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.2",
     "lint-staged": "^13.1.0",
-    "prettier": "^2.8.1"
+    "prettier": "^2.8.1",
+    "vitest": "^0.26.2"
   },
   "lint-staged": {
     "*.{js,jsx}": "eslint --cache --fix"
