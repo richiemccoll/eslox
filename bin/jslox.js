@@ -21,7 +21,7 @@ export class JSLox {
       onError: this.handleError.bind(this)
     })
     const tokens = scanner.scanTokens(source)
-    console.log('run()', tokens)
+    return tokens
   }
 
   runFile() {

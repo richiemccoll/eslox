@@ -7,7 +7,9 @@ class Token {
   }
 
   toString() {
-    return `${this.type} ${this.lexeme} ${this.literal}`
+    return `type=${this.type} lexeme=${
+      this.lexeme ? this.lexeme : 'empty'
+    } literal=${this.literal}`
   }
 }
 
