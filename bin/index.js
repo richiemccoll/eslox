@@ -1,17 +1,17 @@
 import process from 'node:process'
-import { JSLox } from './jslox.js'
+import { ESLox } from './ESLox.js'
 
 function main() {
   const args = process.argv.slice(2)
   const cliArgs = Array.isArray(args) ? args : [args]
-  const jslox = new JSLox()
+  const eslox = new ESLox()
 
   if (cliArgs.length > 1) {
-    jslox.printUsage()
+    eslox.printUsage()
   } else if (cliArgs.length === 1) {
-    jslox.runFile(cliArgs[0])
+    eslox.runFile(cliArgs[0])
   } else {
-    jslox.runPrompt()
+    eslox.runPrompt()
   }
 }
 

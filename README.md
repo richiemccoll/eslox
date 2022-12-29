@@ -1,3 +1,3 @@
-# JSLox
+# ESLox
 
-JavaScript implementation of lox language from Crafting Interpreters book.
+ECMAScript implementation of the lox language from Crafting Interpreters book.

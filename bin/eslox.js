@@ -1,7 +1,7 @@
 import readline from 'readline'
 import { Scanner } from './scanner.js'
 
-export class JSLox {
+export class ESLox {
   constructor() {
     this.error = false
   }
@@ -48,7 +48,7 @@ export class JSLox {
   }
 
   printUsage() {
-    console.log('Usage jslox [script]')
+    console.log('Usage eslox [script]')
     process.exit(64)
   }
 }
