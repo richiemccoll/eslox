@@ -117,6 +117,24 @@ export class Scanner {
           while (!isNewLine && !this.isAtEnd()) {
             this.advance()
           }
+        } else if (this.match('*')) {
+          this.addToken(TokenType.BLOCK_COMMENT_START)
+
+          const isBlockEnd = this.peek() === '*'
+
+          // Ignore the comment content until block end
+          while (!isBlockEnd && !this.isAtEnd()) {
+            if (this.peek() === '*') {
+              this.tokens.push(
+                new Token({
+                  type: TokenType.BLOCK_COMMENT_END,
+                  line: this.line,
+                  lexeme: '*/'
+                })
+              )
+            }
+            this.advance()
+          }
         } else {
           this.addToken(TokenType.SLASH)
         }

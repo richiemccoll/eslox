@@ -2,6 +2,8 @@ export const TokenType = {
   AND: 'and',
   BANG: '!',
   BANG_EQUAL: '!=',
+  BLOCK_COMMENT_START: '/*',
+  BLOCK_COMMENT_END: '*/',
   CLASS: 'class',
   COMMA: ',',
   DOT: '.',
