@@ -1,5 +1,6 @@
 import { Token } from './token.js'
 import { TokenType } from './constants/token-type.js'
+import { reservedKeywords } from './constants/reserved-keywords.js'
 
 export class Scanner {
   constructor({ source, onError }) {
@@ -221,6 +222,14 @@ export class Scanner {
     while (this.isAlphaNumeric(this.peek())) {
       this.advance()
     }
+
+    const text = this.source.substring(this.start, this.current)
+    const keyword = this.isReservedKeyword(text)
+    if (keyword) {
+      this.addToken(keyword)
+      return
+    }
+
     this.addToken(TokenType.IDENTIFIER)
   }
 
@@ -259,5 +268,9 @@ export class Scanner {
 
   isAlphaNumeric(char) {
     return this.isAlpha(char) || this.isNumber(char)
+  }
+
+  isReservedKeyword(text) {
+    return reservedKeywords[text]
   }
 }

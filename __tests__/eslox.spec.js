@@ -116,7 +116,53 @@ describe('ESLox - run()', () => {
   it('run("class") should generate the correct token list', () => {
     const res = eslox.run('class').map(token => token.toString())
     expect(res).toEqual([
-      `type=id lexeme=class literal=undefined`,
+      `type=class lexeme=class literal=undefined`,
+      'type=eof lexeme=empty literal=undefined'
+    ])
+  })
+
+  it('run("var test = "value"") should generate the correct token list', () => {
+    const res = eslox.run(`var test = "value"`).map(token => token.toString())
+    expect(res).toEqual([
+      'type=var lexeme=var literal=undefined',
+      'type=id lexeme=test literal=undefined',
+      'type== lexeme== literal=undefined',
+      `type=str lexeme="value" literal=value`,
+      'type=eof lexeme=empty literal=undefined'
+    ])
+  })
+
+  it('run("var test = "value"") should generate the correct token list', () => {
+    const res = eslox.run(`var test = "value"`).map(token => token.toString())
+    expect(res).toEqual([
+      'type=var lexeme=var literal=undefined',
+      'type=id lexeme=test literal=undefined',
+      'type== lexeme== literal=undefined',
+      `type=str lexeme="value" literal=value`,
+      'type=eof lexeme=empty literal=undefined'
+    ])
+  })
+
+  it('run("var test = "value"\nif(test) { return }") should generate the correct token list', () => {
+    const res = eslox
+      .run(
+        `var test = "value"
+         if (test) { return }
+        `
+      )
+      .map(token => token.toString())
+    expect(res).toEqual([
+      'type=var lexeme=var literal=undefined',
+      'type=id lexeme=test literal=undefined',
+      'type== lexeme== literal=undefined',
+      `type=str lexeme="value" literal=value`,
+      'type=if lexeme=if literal=undefined',
+      'type=( lexeme=( literal=undefined',
+      'type=id lexeme=test literal=undefined',
+      'type=) lexeme=) literal=undefined',
+      'type={ lexeme={ literal=undefined',
+      'type=return lexeme=return literal=undefined',
+      'type=} lexeme=} literal=undefined',
       'type=eof lexeme=empty literal=undefined'
     ])
   })
