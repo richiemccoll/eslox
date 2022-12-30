@@ -112,4 +112,12 @@ describe('ESLox - run()', () => {
       'type=eof lexeme=empty literal=undefined'
     ])
   })
+
+  it('run("class") should generate the correct token list', () => {
+    const res = eslox.run('class').map(token => token.toString())
+    expect(res).toEqual([
+      `type=id lexeme=class literal=undefined`,
+      'type=eof lexeme=empty literal=undefined'
+    ])
+  })
 })

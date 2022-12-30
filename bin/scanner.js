@@ -136,6 +136,8 @@ export class Scanner {
       default: {
         if (this.isNumber(character)) {
           this.number()
+        } else if (this.isAlpha(character)) {
+          this.identifier()
         } else {
           this.onError(this.line, 'Unexpected character.')
         }
@@ -207,6 +209,21 @@ export class Scanner {
     this.addToken(TokenType.STRING, value)
   }
 
+  isAlpha(char) {
+    return (
+      ('a' <= char && char <= 'z') ||
+      ('A' <= char && char <= 'Z') ||
+      char === '_'
+    )
+  }
+
+  identifier() {
+    while (this.isAlphaNumeric(this.peek())) {
+      this.advance()
+    }
+    this.addToken(TokenType.IDENTIFIER)
+  }
+
   isNumber(char) {
     return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(char)
   }
@@ -238,5 +255,9 @@ export class Scanner {
     } else {
       return this.source[this.current + 1]
     }
+  }
+
+  isAlphaNumeric(char) {
+    return this.isAlpha(char) || this.isNumber(char)
   }
 }
