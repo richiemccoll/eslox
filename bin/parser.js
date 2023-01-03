@@ -1,10 +1,26 @@
 import { TokenType } from './constants/token-type'
 import { Binary, Grouping, Literal, Unary } from './constants/ast-node-types'
 
+class ParseError extends Error {
+  constructor(token, message) {
+    super(`${token} ${message}`)
+  }
+}
+
 export class Parser {
-  constructor() {
+  constructor({ onError }) {
     this.current = 0
+    this.onError = onError
     this.tokens = []
+  }
+
+  parse() {
+    try {
+      this.expression()
+    } catch (error) {
+      console.error(`parse() error`, error)
+      return null
+    }
   }
 
   _buildBinaryExpression(method, ...matchedTokenTypes) {
@@ -79,6 +95,47 @@ export class Parser {
     if (this.match(TokenType.LEFT_PAREN)) {
       const exp = this.expression()
       return new Grouping(exp)
+    }
+    throw this.error(this.peek(), 'Expect expression')
+  }
+
+  consume(tokenType, message) {
+    if (this.check(tokenType)) {
+      return this.advance()
+    }
+
+    throw this.error(this.peek(), message)
+  }
+
+  error(token, message) {
+    if (token.type === TokenType.EOF) {
+      this.onError(token.line, ` at end ${message}`)
+    } else {
+      this.onError(token.line, ` at '${token.lexeme}' ${message}`)
+    }
+    return new ParseError(token, message)
+  }
+
+  synchronize() {
+    this.advance()
+
+    while (!this.isAtEnd()) {
+      if (this.previous().type === TokenType.SEMICOLON) {
+        return
+      }
+      switch (this.peek().type) {
+        case TokenType.CLASS:
+        case TokenType.FUN:
+        case TokenType.VAR:
+        case TokenType.FOR:
+        case TokenType.IF:
+        case TokenType.WHILE:
+        case TokenType.PRINT:
+        case TokenType.RETURN:
+          return
+      }
+
+      this.advance()
     }
   }
 

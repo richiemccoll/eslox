@@ -1,4 +1,5 @@
-import readline from 'readline'
+import readline from 'node:readline'
+import { Parser } from './parser.js'
 import { Scanner } from './scanner.js'
 
 export class ESLox {
@@ -15,13 +16,26 @@ export class ESLox {
     this.error = true
   }
 
-  run(source) {
+  parseTokens(tokens) {
+    const parser = new Parser({
+      onError: this.handleError.bind(this)
+    })
+    return parser.parse(tokens)
+  }
+
+  scanSource(source) {
     const scanner = new Scanner({
       source,
       onError: this.handleError.bind(this)
     })
     const tokens = scanner.scanTokens(source)
     return tokens
+  }
+
+  run(source) {
+    const tokens = this.scanSource(source)
+    const expression = this.parseTokens(tokens)
+    return expression
   }
 
   runFile() {
