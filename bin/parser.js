@@ -14,9 +14,11 @@ export class Parser {
     this.tokens = []
   }
 
-  parse() {
+  parse(tokens) {
     try {
-      this.expression()
+      this.tokens = tokens
+      const exp = this.expression()
+      return exp
     } catch (error) {
       console.error(`parse() error`, error)
       return null

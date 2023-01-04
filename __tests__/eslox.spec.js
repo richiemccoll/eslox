@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { ESLox } from '../bin/eslox'
 
+function parseLiteral(val) {
+  return JSON.parse(JSON.stringify(val))
+}
+
 describe('ESLox - scanSource()', () => {
   let eslox = null
 
@@ -202,5 +206,31 @@ describe('ESLox - scanSource()', () => {
       'type=*/ lexeme=*/ literal=undefined',
       'type=eof lexeme=empty literal=undefined'
     ])
+  })
+})
+
+describe('ESLox - parseTokens()', () => {
+  let eslox
+
+  beforeEach(() => {
+    eslox = new ESLox()
+  })
+
+  afterEach(() => {
+    eslox = null
+  })
+
+  it('should parse literal values', () => {
+    const f = eslox.parseTokens(eslox.scanSource('false'))
+    expect(parseLiteral(f)).toEqual({ val: false })
+
+    const t = eslox.parseTokens(eslox.scanSource('true'))
+    expect(parseLiteral(t)).toEqual({ val: true })
+
+    const n = eslox.parseTokens(eslox.scanSource('1'))
+    expect(parseLiteral(n)).toEqual({ val: 1 })
+
+    const s = eslox.parseTokens(eslox.scanSource('"string"'))
+    expect(parseLiteral(s)).toEqual({ val: 'string' })
   })
 })
