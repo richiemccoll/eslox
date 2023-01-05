@@ -234,3 +234,26 @@ describe('ESLox - parseTokens()', () => {
     expect(parseLiteral(s)).toEqual({ val: 'string' })
   })
 })
+
+describe('ESLox - run()', () => {
+  let eslox
+
+  beforeEach(() => {
+    eslox = new ESLox()
+  })
+
+  afterEach(() => {
+    eslox = null
+  })
+
+  it('should interpret literal values', () => {
+    const f = eslox.run('false')
+    expect(f).toEqual(false)
+
+    const t = eslox.run('true')
+    expect(t).toEqual(true)
+
+    const n = eslox.run('nil')
+    expect(n).toEqual('nil')
+  })
+})

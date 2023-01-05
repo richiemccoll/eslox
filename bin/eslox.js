@@ -1,10 +1,12 @@
 import readline from 'node:readline'
+import { Interpreter } from './interpreter.js'
 import { Parser } from './parser.js'
 import { Scanner } from './scanner.js'
 
 export class ESLox {
   constructor() {
     this.error = false
+    this.interpreter = new Interpreter()
   }
 
   handleError(line, message) {
@@ -35,7 +37,8 @@ export class ESLox {
   run(source) {
     const tokens = this.scanSource(source)
     const expression = this.parseTokens(tokens)
-    return expression
+    const result = this.interpreter.interpret(expression)
+    return result
   }
 
   runFile() {
