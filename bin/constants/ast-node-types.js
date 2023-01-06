@@ -11,13 +11,9 @@ class Binary {
 }
 
 class Unary {
-  constructor({ operator, expr }) {
+  constructor({ operator, right }) {
     this.operator = operator
-    this.expr = expr
-  }
-
-  accept() {
-    console.log('Unary - accept() - TODO needs implementing')
+    this.right = right
   }
 }
 

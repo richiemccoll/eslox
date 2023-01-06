@@ -255,5 +255,19 @@ describe('ESLox - run()', () => {
 
     const n = eslox.run('nil')
     expect(n).toEqual('nil')
+
+    const number = eslox.run('100')
+    expect(number).toEqual(100)
+  })
+
+  it('should interpret unary values', () => {
+    const t = eslox.run('!false')
+    expect(t).toEqual(true)
+
+    const f = eslox.run('!true')
+    expect(f).toEqual(false)
+
+    const n = eslox.run('-1')
+    expect(n).toEqual(-1)
   })
 })

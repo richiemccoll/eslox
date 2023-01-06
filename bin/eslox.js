@@ -43,7 +43,7 @@ export class ESLox {
 
   runFile() {
     if (this.error) {
-      process.exit(65)
+      process.exit(1)
     }
   }
 
@@ -66,6 +66,6 @@ export class ESLox {
 
   printUsage() {
     console.log('Usage eslox [script]')
-    process.exit(64)
+    process.exit(0)
   }
 }
