@@ -270,4 +270,54 @@ describe('ESLox - run()', () => {
     const n = eslox.run('-1')
     expect(n).toEqual(-1)
   })
+
+  it('should interpret binary values', () => {
+    const minus = eslox.run('1 - 1')
+    expect(minus).toEqual(0)
+
+    const divide = eslox.run('15 / 3')
+    expect(divide).toEqual(5)
+
+    const multiply = eslox.run('2 * 2')
+    expect(multiply).toEqual(4)
+
+    const plus = eslox.run('2 + 12')
+    expect(plus).toEqual(14)
+
+    const sc = eslox.run(`"a" + "b"`)
+    expect(sc).toEqual('ab')
+
+    const gn = eslox.run(`5 > 2`)
+    expect(gn).toEqual(true)
+
+    const ge = eslox.run(`5 >= 5`)
+    expect(ge).toEqual(true)
+
+    const ge_ = eslox.run(`4 >= 5`)
+    expect(ge_).toEqual(false)
+
+    const less = eslox.run('4 < 5')
+    expect(less).toEqual(true)
+
+    const lessEqual = eslox.run('10 <= 10')
+    expect(lessEqual).toEqual(true)
+
+    const eq = eslox.run('0 == 0')
+    expect(eq).toEqual(true)
+
+    const eq_ = eslox.run('1 == 1')
+    expect(eq_).toEqual(true)
+
+    const eq__ = eslox.run('3 == 1')
+    expect(eq__).toEqual(false)
+
+    const ne = eslox.run('2 != 1')
+    expect(ne).toEqual(true)
+
+    const ne_ = eslox.run('0 != 0')
+    expect(ne_).toEqual(false)
+
+    const ne__ = eslox.run('100 != "100"')
+    expect(ne__).toEqual(false)
+  })
 })

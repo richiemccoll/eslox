@@ -142,7 +142,12 @@ export class Parser {
   }
 
   match(...tokenTypes) {
-    for (let type of tokenTypes) {
+    let listOfTokenTypes =
+      Array.isArray(tokenTypes) && Array.isArray(tokenTypes[0])
+        ? tokenTypes[0]
+        : tokenTypes
+
+    for (let type of listOfTokenTypes) {
       if (this.check(type)) {
         this.advance()
         return true
