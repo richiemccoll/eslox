@@ -6,7 +6,9 @@ import { Scanner } from './scanner.js'
 export class ESLox {
   constructor() {
     this.error = false
-    this.interpreter = new Interpreter()
+    this.interpreter = new Interpreter({
+      onError: this.handleError.bind(this)
+    })
   }
 
   handleError(line, message) {
@@ -14,7 +16,7 @@ export class ESLox {
   }
 
   reportError(line, where, message) {
-    console.error('[line ' + line + '] Error' + where + ': ' + message)
+    console.error(`[line ${line} Error ${where}: ${message}`)
     this.error = true
   }
 

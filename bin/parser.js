@@ -1,11 +1,6 @@
 import { TokenType } from './constants/token-type'
-import { Binary, Grouping, Literal, Unary } from './constants/ast-node-types'
-
-class ParseError extends Error {
-  constructor(token, message) {
-    super(`${token} ${message}`)
-  }
-}
+import { Binary, Grouping, Literal, Unary } from './ast-node-types'
+import { ParseError } from './errors'
 
 export class Parser {
   constructor({ onError }) {
