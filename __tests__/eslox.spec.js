@@ -220,18 +220,14 @@ describe('ESLox - parseTokens()', () => {
     eslox = null
   })
 
-  it('should parse literal values', () => {
-    const f = eslox.parseTokens(eslox.scanSource('false'))
-    expect(parseLiteral(f)).toEqual({ val: false })
-
-    const t = eslox.parseTokens(eslox.scanSource('true'))
-    expect(parseLiteral(t)).toEqual({ val: true })
-
-    const n = eslox.parseTokens(eslox.scanSource('1'))
-    expect(parseLiteral(n)).toEqual({ val: 1 })
-
-    const s = eslox.parseTokens(eslox.scanSource('"string"'))
-    expect(parseLiteral(s)).toEqual({ val: 'string' })
+  it.each([
+    ['false', false],
+    ['true', true],
+    ['1', 1],
+    ['"string"', 'string']
+  ])('should parse literal values', (input, expected) => {
+    const result = eslox.parseTokens(eslox.scanSource(input))
+    expect(parseLiteral(result)).toEqual({ val: expected })
   })
 })
 
@@ -246,78 +242,43 @@ describe('ESLox - run()', () => {
     eslox = null
   })
 
-  it('should interpret literal values', () => {
-    const f = eslox.run('false')
-    expect(f).toEqual(false)
-
-    const t = eslox.run('true')
-    expect(t).toEqual(true)
-
-    const n = eslox.run('nil')
-    expect(n).toEqual('nil')
-
-    const number = eslox.run('100')
-    expect(number).toEqual(100)
+  it.each([
+    ['false', false],
+    ['true', true],
+    ['nil', 'nil'],
+    ['100', 100]
+  ])('should interpret literal values', (input, expected) => {
+    const result = eslox.run(input)
+    expect(result).toEqual(expected)
   })
 
-  it('should interpret unary values', () => {
-    const t = eslox.run('!false')
-    expect(t).toEqual(true)
-
-    const f = eslox.run('!true')
-    expect(f).toEqual(false)
-
-    const n = eslox.run('-1')
-    expect(n).toEqual(-1)
+  it.each([
+    ['!false', true],
+    ['!true', false],
+    ['-1', -1]
+  ])('should interpret unary values', (input, expected) => {
+    const result = eslox.run(input)
+    expect(result).toEqual(expected)
   })
 
-  it('should interpret binary values', () => {
-    const minus = eslox.run('1 - 1')
-    expect(minus).toEqual(0)
-
-    const divide = eslox.run('15 / 3')
-    expect(divide).toEqual(5)
-
-    const multiply = eslox.run('2 * 2')
-    expect(multiply).toEqual(4)
-
-    const plus = eslox.run('2 + 12')
-    expect(plus).toEqual(14)
-
-    const sc = eslox.run(`"a" + "b"`)
-    expect(sc).toEqual('ab')
-
-    const gn = eslox.run(`5 > 2`)
-    expect(gn).toEqual(true)
-
-    const ge = eslox.run(`5 >= 5`)
-    expect(ge).toEqual(true)
-
-    const ge_ = eslox.run(`4 >= 5`)
-    expect(ge_).toEqual(false)
-
-    const less = eslox.run('4 < 5')
-    expect(less).toEqual(true)
-
-    const lessEqual = eslox.run('10 <= 10')
-    expect(lessEqual).toEqual(true)
-
-    const eq = eslox.run('0 == 0')
-    expect(eq).toEqual(true)
-
-    const eq_ = eslox.run('1 == 1')
-    expect(eq_).toEqual(true)
-
-    const eq__ = eslox.run('3 == 1')
-    expect(eq__).toEqual(false)
-
-    const ne = eslox.run('2 != 1')
-    expect(ne).toEqual(true)
-
-    const ne_ = eslox.run('0 != 0')
-    expect(ne_).toEqual(false)
-
-    const ne__ = eslox.run('100 != "100"')
-    expect(ne__).toEqual(false)
+  it.each([
+    ['1 - 1', 0],
+    ['15 / 3', 5],
+    ['2 * 2', 4],
+    ['2 + 12', 14],
+    [`"a" + "b"`, 'ab'],
+    ['5 > 2', true],
+    ['5 >= 5', true],
+    ['4 >= 5', false],
+    ['10 <= 10', true],
+    ['0 == 0', true],
+    ['1 == 1', true],
+    ['3 == 1', false],
+    ['2 != 1', true],
+    ['0 != 0', false],
+    ['100 != 100', false]
+  ])('should interpret binary values', (input, expected) => {
+    const result = eslox.run(input)
+    expect(result).toEqual(expected)
   })
 })
