@@ -22,9 +22,10 @@ export class ESLox {
 
   parseTokens(tokens) {
     const parser = new Parser({
-      onError: this.handleError.bind(this)
+      onError: this.handleError.bind(this),
+      tokens
     })
-    return parser.parse(tokens)
+    return parser.parse()
   }
 
   scanSource(source) {

@@ -3,16 +3,15 @@ import { Binary, Grouping, Literal, Unary } from './ast-node-types'
 import { ParseError } from './errors'
 
 export class Parser {
-  constructor({ onError }) {
+  constructor({ tokens, onError }) {
     this.current = 0
     this.onError = onError
-    this.tokens = []
+    this.tokens = tokens
   }
 
-  parse(tokens) {
+  parse() {
     try {
-      this.tokens = tokens
-      const exp = this.expression()
+      const exp = this._expression()
       return exp
     } catch (error) {
       console.error(`parse() error`, error)
@@ -23,8 +22,8 @@ export class Parser {
   _buildBinaryExpression(method, ...matchedTokenTypes) {
     let exp = this[method]()
 
-    while (this.match(matchedTokenTypes)) {
-      const operator = this.previous()
+    while (this._match(matchedTokenTypes)) {
+      const operator = this._previous()
       const right = this[method]()
       exp = new Binary({ left: exp, operator, right })
     }
@@ -32,21 +31,21 @@ export class Parser {
     return exp
   }
 
-  expression() {
-    return this.equality()
+  _expression() {
+    return this._equality()
   }
 
-  equality() {
+  _equality() {
     return this._buildBinaryExpression(
-      'comparison',
+      '_comparison',
       TokenType.BANG_EQUAL,
       TokenType.EQUAL_EQUAL
     )
   }
 
-  comparison() {
+  _comparison() {
     return this._buildBinaryExpression(
-      'term',
+      '_term',
       TokenType.GREATER,
       TokenType.GREATER_EQUAL,
       TokenType.LESS,
@@ -54,57 +53,61 @@ export class Parser {
     )
   }
 
-  term() {
+  _term() {
     return this._buildBinaryExpression(
-      'factor',
+      '_factor',
       TokenType.MINUS,
       TokenType.PLUS
     )
   }
 
-  factor() {
-    return this._buildBinaryExpression('unary', TokenType.SLASH, TokenType.STAR)
+  _factor() {
+    return this._buildBinaryExpression(
+      '_unary',
+      TokenType.SLASH,
+      TokenType.STAR
+    )
   }
 
-  unary() {
-    if (this.match(TokenType.BANG, TokenType.MINUS)) {
-      const operator = this.previous()
-      const right = this.unary()
+  _unary() {
+    if (this._match(TokenType.BANG, TokenType.MINUS)) {
+      const operator = this._previous()
+      const right = this._unary()
       return new Unary({ operator, right })
     }
 
-    return this.primary()
+    return this._primary()
   }
 
-  primary() {
-    if (this.match(TokenType.FALSE)) {
+  _primary() {
+    if (this._match(TokenType.FALSE)) {
       return new Literal(false)
     }
-    if (this.match(TokenType.TRUE)) {
+    if (this._match(TokenType.TRUE)) {
       return new Literal(true)
     }
-    if (this.match(TokenType.NIL)) {
+    if (this._match(TokenType.NIL)) {
       return new Literal(null)
     }
-    if (this.match(TokenType.NUMBER, TokenType.STRING)) {
-      return new Literal(this.previous().literal)
+    if (this._match(TokenType.NUMBER, TokenType.STRING)) {
+      return new Literal(this._previous().literal)
     }
-    if (this.match(TokenType.LEFT_PAREN)) {
-      const exp = this.expression()
+    if (this._match(TokenType.LEFT_PAREN)) {
+      const exp = this._expression()
       return new Grouping(exp)
     }
-    throw this.error(this.peek(), 'Expect expression')
+    throw this._error(this._peek(), 'Expect expression')
   }
 
-  consume(tokenType, message) {
-    if (this.check(tokenType)) {
-      return this.advance()
+  _consume(tokenType, message) {
+    if (this._check(tokenType)) {
+      return this._advance()
     }
 
-    throw this.error(this.peek(), message)
+    throw this._error(this._peek(), message)
   }
 
-  error(token, message) {
+  _error(token, message) {
     if (token.type === TokenType.EOF) {
       this.onError(token.line, ` at end ${message}`)
     } else {
@@ -113,14 +116,14 @@ export class Parser {
     return new ParseError(token, message)
   }
 
-  synchronize() {
-    this.advance()
+  _synchronize() {
+    this._advance()
 
-    while (!this.isAtEnd()) {
-      if (this.previous().type === TokenType.SEMICOLON) {
+    while (!this._isAtEnd()) {
+      if (this._previous().type === TokenType.SEMICOLON) {
         return
       }
-      switch (this.peek().type) {
+      switch (this._peek().type) {
         case TokenType.CLASS:
         case TokenType.FUN:
         case TokenType.VAR:
@@ -132,49 +135,49 @@ export class Parser {
           return
       }
 
-      this.advance()
+      this._advance()
     }
   }
 
-  match(...tokenTypes) {
+  _match(...tokenTypes) {
     let listOfTokenTypes =
       Array.isArray(tokenTypes) && Array.isArray(tokenTypes[0])
         ? tokenTypes[0]
         : tokenTypes
 
     for (let type of listOfTokenTypes) {
-      if (this.check(type)) {
-        this.advance()
+      if (this._check(type)) {
+        this._advance()
         return true
       }
     }
     return false
   }
 
-  check(tokenType) {
-    if (this.isAtEnd()) {
+  _check(tokenType) {
+    if (this._isAtEnd()) {
       return false
     }
-    if (this.peek().type === tokenType) {
+    if (this._peek().type === tokenType) {
       return true
     }
   }
-  advance() {
-    if (!this.isAtEnd()) {
+  _advance() {
+    if (!this._isAtEnd()) {
       this.current++
     }
-    return this.previous()
+    return this._previous()
   }
 
-  isAtEnd() {
-    return this.peek().type === TokenType.EOF
+  _isAtEnd() {
+    return this._peek().type === TokenType.EOF
   }
 
-  peek() {
+  _peek() {
     return this.tokens[this.current]
   }
 
-  previous() {
+  _previous() {
     return this.tokens[this.current - 1]
   }
 }
