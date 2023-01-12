@@ -1,10 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { ESLox } from '../bin/eslox'
 
-function parseLiteral(val) {
-  return JSON.parse(JSON.stringify(val))
-}
-
 describe('ESLox - scanSource()', () => {
   let eslox = null
 
@@ -209,28 +205,6 @@ describe('ESLox - scanSource()', () => {
   })
 })
 
-describe('ESLox - parseTokens()', () => {
-  let eslox
-
-  beforeEach(() => {
-    eslox = new ESLox()
-  })
-
-  afterEach(() => {
-    eslox = null
-  })
-
-  it.each([
-    ['false', false],
-    ['true', true],
-    ['1', 1],
-    ['"string"', 'string']
-  ])('should parse literal values', (input, expected) => {
-    const result = eslox.parseTokens(eslox.scanSource(input))
-    expect(parseLiteral(result)).toEqual({ val: expected })
-  })
-})
-
 describe('ESLox - run()', () => {
   let eslox
 
@@ -243,41 +217,51 @@ describe('ESLox - run()', () => {
   })
 
   it.each([
-    ['false', false],
-    ['true', true],
-    ['nil', 'nil'],
-    ['100', 100]
+    ['false;', false],
+    ['true;', true],
+    ['nil;', 'nil'],
+    ['100;', 100]
   ])('should interpret literal values', (input, expected) => {
     const result = eslox.run(input)
     expect(result).toEqual(expected)
   })
 
   it.each([
-    ['!false', true],
-    ['!true', false],
-    ['-1', -1]
+    ['!false;', true],
+    ['!true;', false],
+    ['-1;', -1]
   ])('should interpret unary values', (input, expected) => {
     const result = eslox.run(input)
     expect(result).toEqual(expected)
   })
 
   it.each([
-    ['1 - 1', 0],
-    ['15 / 3', 5],
-    ['2 * 2', 4],
-    ['2 + 12', 14],
-    [`"a" + "b"`, 'ab'],
-    ['5 > 2', true],
-    ['5 >= 5', true],
-    ['4 >= 5', false],
-    ['10 <= 10', true],
-    ['0 == 0', true],
-    ['1 == 1', true],
-    ['3 == 1', false],
-    ['2 != 1', true],
-    ['0 != 0', false],
-    ['100 != 100', false]
+    ['1 - 1;', 0],
+    ['15 / 3;', 5],
+    ['2 * 2;', 4],
+    ['2 + 12;', 14],
+    [`"a" + "b";`, 'ab'],
+    ['5 > 2;', true],
+    ['5 >= 5;', true],
+    ['4 >= 5;', false],
+    ['10 <= 10;', true],
+    ['0 == 0;', true],
+    ['1 == 1;', true],
+    ['3 == 1;', false],
+    ['2 != 1;', true],
+    ['0 != 0;', false],
+    ['100 != 100;', false]
   ])('should interpret binary values', (input, expected) => {
+    const result = eslox.run(input)
+    expect(result).toEqual(expected)
+  })
+
+  it.each([
+    ['print 1 - 1;', 0],
+    ['print "one";', 'one'],
+    ['print true;', true],
+    ['print 2 + 1;', 3]
+  ])('should handle print statements', (input, expected) => {
     const result = eslox.run(input)
     expect(result).toEqual(expected)
   })

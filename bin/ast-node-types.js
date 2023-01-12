@@ -43,4 +43,16 @@ class Grouping {
   }
 }
 
-export { Binary, Grouping, Literal, Unary }
+class Stmt {
+  constructor(exp) {
+    this.expression = exp
+  }
+}
+
+class PrintStmt {
+  constructor(exp) {
+    this.expression = exp
+  }
+}
+
+export { Binary, Grouping, Literal, PrintStmt, Stmt, Unary }

@@ -1,4 +1,4 @@
-import { Binary, Literal, Unary } from './ast-node-types'
+import { Binary, Literal, PrintStmt, Stmt, Unary } from './ast-node-types'
 import { TokenType } from './constants/token-type'
 import { RuntimeError } from './errors'
 
@@ -85,7 +85,23 @@ export class Interpreter {
     return null
   }
 
+  _visitPrintStmt(exp) {
+    const value = this._evaluate(exp.expression)
+    console.log(JSON.stringify(value))
+    return value
+  }
+
+  _visitStmt(exp) {
+    return this._evaluate(exp.expression)
+  }
+
   _evaluate(exp) {
+    if (exp instanceof Stmt) {
+      return this._visitStmt(exp)
+    }
+    if (exp instanceof PrintStmt) {
+      return this._visitPrintStmt(exp)
+    }
     if (exp instanceof Literal) {
       return this._visitLiteral(exp)
     }
@@ -97,13 +113,19 @@ export class Interpreter {
     }
   }
 
-  interpret(expression) {
+  interpret(statements) {
     try {
-      return this._evaluate(expression)
+      for (let statement of statements) {
+        return this._execute(statement)
+      }
     } catch (error) {
       // TODO - how to get the line number?
       this.onError(0, error.message)
     }
+  }
+
+  _execute(statement) {
+    return this._evaluate(statement)
   }
 
   _isTruthy(exp) {

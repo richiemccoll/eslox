@@ -1,5 +1,12 @@
 import { TokenType } from './constants/token-type'
-import { Binary, Grouping, Literal, Unary } from './ast-node-types'
+import {
+  Binary,
+  Grouping,
+  Literal,
+  PrintStmt,
+  Stmt,
+  Unary
+} from './ast-node-types'
 import { ParseError } from './errors'
 
 export class Parser {
@@ -11,8 +18,11 @@ export class Parser {
 
   parse() {
     try {
-      const exp = this._expression()
-      return exp
+      const statements = []
+      while (!this._isAtEnd()) {
+        statements.push(this._statement())
+      }
+      return statements
     } catch (error) {
       console.error(`parse() error`, error)
       return null
@@ -29,6 +39,22 @@ export class Parser {
     }
 
     return exp
+  }
+
+  _statement() {
+    if (this._match(TokenType.PRINT)) {
+      return this._print()
+    }
+
+    const exp = this._expression()
+    this._consume(TokenType.SEMICOLON, 'Expect ; after expression')
+    return new Stmt(exp)
+  }
+
+  _print() {
+    const value = this._expression()
+    this._consume(TokenType.SEMICOLON, 'Expect ; after value')
+    return new PrintStmt(value)
   }
 
   _expression() {

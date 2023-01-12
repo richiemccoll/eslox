@@ -39,8 +39,8 @@ export class ESLox {
 
   run(source) {
     const tokens = this.scanSource(source)
-    const expression = this.parseTokens(tokens)
-    const result = this.interpreter.interpret(expression)
+    const statements = this.parseTokens(tokens)
+    const result = this.interpreter.interpret(statements)
     return result
   }
 
