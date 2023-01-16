@@ -5,7 +5,9 @@ import {
   Literal,
   PrintStmt,
   Stmt,
-  Unary
+  Unary,
+  Var,
+  VarStmt
 } from './ast-node-types'
 import { ParseError } from './errors'
 
@@ -20,7 +22,7 @@ export class Parser {
     try {
       const statements = []
       while (!this._isAtEnd()) {
-        statements.push(this._statement())
+        statements.push(this._declaration())
       }
       return statements
     } catch (error) {
@@ -41,6 +43,19 @@ export class Parser {
     return exp
   }
 
+  _declaration() {
+    try {
+      if (this._match(TokenType.VAR)) {
+        return this._varDeclaration()
+      }
+
+      return this._statement()
+    } catch (error) {
+      console.error(`parse() error`, error)
+      return null
+    }
+  }
+
   _statement() {
     if (this._match(TokenType.PRINT)) {
       return this._print()
@@ -55,6 +70,19 @@ export class Parser {
     const value = this._expression()
     this._consume(TokenType.SEMICOLON, 'Expect ; after value')
     return new PrintStmt(value)
+  }
+
+  _varDeclaration() {
+    const name = this._consume(
+      TokenType.IDENTIFIER,
+      'Expect variable name after var'
+    )
+    let initializer = null
+    if (this._match(TokenType.EQUAL)) {
+      initializer = this._expression()
+    }
+    this._consume(TokenType.SEMICOLON, 'Expect ; after expression')
+    return new VarStmt(name, initializer)
   }
 
   _expression() {
@@ -117,6 +145,9 @@ export class Parser {
     }
     if (this._match(TokenType.NUMBER, TokenType.STRING)) {
       return new Literal(this._previous().literal)
+    }
+    if (this._match(TokenType.IDENTIFIER)) {
+      return new Var(this._previous())
     }
     if (this._match(TokenType.LEFT_PAREN)) {
       const exp = this._expression()

@@ -55,4 +55,17 @@ class PrintStmt {
   }
 }
 
-export { Binary, Grouping, Literal, PrintStmt, Stmt, Unary }
+class VarStmt {
+  constructor(name, initializer) {
+    this.name = name
+    this.initializer = initializer
+  }
+}
+
+class Var {
+  constructor(name) {
+    this.name = name
+  }
+}
+
+export { Binary, Grouping, Literal, PrintStmt, Stmt, Unary, Var, VarStmt }
