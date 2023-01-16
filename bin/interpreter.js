@@ -1,9 +1,18 @@
-import { Binary, Literal, PrintStmt, Stmt, Unary } from './ast-node-types'
+import {
+  Binary,
+  Literal,
+  PrintStmt,
+  Stmt,
+  Unary,
+  VarStmt
+} from './ast-node-types'
 import { TokenType } from './constants/token-type'
+import { Environment } from './environment'
 import { RuntimeError } from './errors'
 
 export class Interpreter {
   constructor({ onError }) {
+    this.environment = new Environment()
     this.onError = onError
   }
 
@@ -95,6 +104,15 @@ export class Interpreter {
     return this._evaluate(exp.expression)
   }
 
+  _visitVarStmt(stmt) {
+    let value = null
+    if (stmt.initializer !== null) {
+      value = this._evaluate(stmt.initializer)
+    }
+    this.environment.define(stmt.name.lexeme, value)
+    return null
+  }
+
   _evaluate(exp) {
     if (exp instanceof Stmt) {
       return this._visitStmt(exp)
@@ -107,6 +125,9 @@ export class Interpreter {
     }
     if (exp instanceof Unary) {
       return this._visitUnary(exp)
+    }
+    if (exp instanceof VarStmt) {
+      return this._visitVarStmt(exp)
     }
     if (exp instanceof Binary) {
       return this._visitBinary(exp)
