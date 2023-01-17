@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises'
 import readline from 'node:readline'
 import { Interpreter } from './interpreter.js'
 import { Parser } from './parser.js'
@@ -44,8 +45,13 @@ export class ESLox {
     return result
   }
 
-  runFile() {
-    if (this.error) {
+  async runFile(pathToFile) {
+    try {
+      const file = await fs.readFile(pathToFile)
+      const result = this.run(file.toString('utf-8'))
+      return result
+    } catch (error) {
+      console.error('Error when loading the specified file', error)
       process.exit(1)
     }
   }

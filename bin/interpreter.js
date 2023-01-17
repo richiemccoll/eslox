@@ -5,10 +5,10 @@ import {
   Stmt,
   Unary,
   VarStmt
-} from './ast-node-types'
-import { TokenType } from './constants/token-type'
-import { Environment } from './environment'
-import { RuntimeError } from './errors'
+} from './ast-node-types.js'
+import { TokenType } from './constants/token-type.js'
+import { Environment } from './environment.js'
+import { RuntimeError } from './errors.js'
 
 export class Interpreter {
   constructor({ onError }) {
@@ -109,6 +109,7 @@ export class Interpreter {
     if (stmt.initializer !== null) {
       value = this._evaluate(stmt.initializer)
     }
+
     this.environment.define(stmt.name.lexeme, value)
     return null
   }

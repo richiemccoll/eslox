@@ -1,4 +1,4 @@
-import { RuntimeError } from './errors'
+import { RuntimeError } from './errors.js'
 
 class Environment {
   constructor() {

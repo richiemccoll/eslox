@@ -1,4 +1,4 @@
-import { TokenType } from './constants/token-type'
+import { TokenType } from './constants/token-type.js'
 import {
   Binary,
   Grouping,
@@ -8,8 +8,8 @@ import {
   Unary,
   Var,
   VarStmt
-} from './ast-node-types'
-import { ParseError } from './errors'
+} from './ast-node-types.js'
+import { ParseError } from './errors.js'
 
 export class Parser {
   constructor({ tokens, onError }) {
@@ -151,6 +151,9 @@ export class Parser {
     }
     if (this._match(TokenType.LEFT_PAREN)) {
       const exp = this._expression()
+
+      this._consume(TokenType.RIGHT_PAREN, `Expect ')' after expression.`)
+
       return new Grouping(exp)
     }
     throw this._error(this._peek(), 'Expect expression')
