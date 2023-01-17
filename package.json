@@ -7,14 +7,19 @@
     "eslox": "./bin/index.js"
   },
   "scripts": {
-    "dev": "node ./bin/index.js",
+    "dev": "node --inspect-brk ./bin/index.js",
     "prepare": "husky install",
     "lint": "eslint .",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "lox",
+    "lox-interpreter",
+    "lox-javascript",
+    "crafting-interpreters"
+  ],
+  "author": "Richie McColl",
   "license": "ISC",
   "description": "ECMAScript implementation of lox language from Crafting Interpreters book",
   "devDependencies": {
