@@ -4,6 +4,7 @@ import {
   PrintStmt,
   Stmt,
   Unary,
+  Var,
   VarStmt
 } from './ast-node-types.js'
 import { TokenType } from './constants/token-type.js'
@@ -104,6 +105,10 @@ export class Interpreter {
     return this._evaluate(exp.expression)
   }
 
+  _visitVar(variable) {
+    return this.environment.get(variable.name.lexeme)
+  }
+
   _visitVarStmt(stmt) {
     let value = null
     if (stmt.initializer !== null) {
@@ -126,6 +131,12 @@ export class Interpreter {
     }
     if (exp instanceof Unary) {
       return this._visitUnary(exp)
+    }
+    if (exp instanceof Var) {
+      return this._visitVar(exp)
+    }
+    if (exp instanceof VarStmt) {
+      return this._visitVarStmt(exp)
     }
     if (exp instanceof VarStmt) {
       return this._visitVarStmt(exp)
