@@ -1,5 +1,6 @@
 import { TokenType } from './constants/token-type.js'
 import {
+  Assignment,
   Binary,
   Grouping,
   Literal,
@@ -86,7 +87,22 @@ export class Parser {
   }
 
   _expression() {
-    return this._equality()
+    return this._assignment()
+  }
+
+  _assignment() {
+    const exp = this._equality()
+    if (this._match(TokenType.EQUAL)) {
+      const equals = this._previous()
+      const value = this._assignment()
+      if (exp instanceof Var) {
+        const name = exp.name
+        return new Assignment(name, value)
+      }
+      throw ParseError(equals, 'Invalid assignment')
+    }
+
+    return exp
   }
 
   _equality() {

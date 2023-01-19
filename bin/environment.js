@@ -14,7 +14,7 @@ class Environment {
       return this.values.get(name)
     }
 
-    throw new RuntimeError(`Undefined variable ${name.lexme}`)
+    throw new RuntimeError(`Undefined variable ${name}`)
   }
 }
 

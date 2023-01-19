@@ -68,4 +68,21 @@ class Var {
   }
 }
 
-export { Binary, Grouping, Literal, PrintStmt, Stmt, Unary, Var, VarStmt }
+class Assignment {
+  constructor(name, value) {
+    this.name = name
+    this.value = value
+  }
+}
+
+export {
+  Assignment,
+  Binary,
+  Grouping,
+  Literal,
+  PrintStmt,
+  Stmt,
+  Unary,
+  Var,
+  VarStmt
+}

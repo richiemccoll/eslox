@@ -1,4 +1,5 @@
 import {
+  Assignment,
   Binary,
   Literal,
   PrintStmt,
@@ -95,6 +96,14 @@ export class Interpreter {
     return null
   }
 
+  _visitAssignment(exp) {
+    const value = this._evaluate(exp.value)
+    if (this.environment.get(exp.name.lexeme)) {
+      return this.environment.define(exp.name.lexeme, value)
+    }
+    throw new RuntimeError('Undefined variable', exp.name ? exp.name : exp)
+  }
+
   _visitPrintStmt(exp) {
     const value = this._evaluate(exp.expression)
     console.log(JSON.stringify(value))
@@ -120,6 +129,9 @@ export class Interpreter {
   }
 
   _evaluate(exp) {
+    if (exp instanceof Assignment) {
+      return this._visitAssignment(exp)
+    }
     if (exp instanceof Stmt) {
       return this._visitStmt(exp)
     }
