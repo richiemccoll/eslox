@@ -2,6 +2,23 @@ import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { ESLox } from '../bin/eslox'
 
+describe('ESLox - runFile()', () => {
+  let eslox
+
+  beforeEach(() => {
+    eslox = new ESLox()
+  })
+
+  afterEach(() => {
+    eslox = null
+  })
+
+  it('should read files', () => {
+    const result = eslox.runFile(path.resolve(__dirname, './test.eslox'))
+    expect(result).toEqual(true)
+  })
+})
+
 describe('ESLox - scanSource()', () => {
   let eslox = null
 
@@ -279,22 +296,5 @@ describe('ESLox - run()', () => {
     eslox.run(`a = 2;`)
     const result = eslox.run(`print a;`)
     expect(result).toEqual(2)
-  })
-})
-
-describe('ESLox - runFile()', () => {
-  let eslox
-
-  beforeEach(() => {
-    eslox = new ESLox()
-  })
-
-  afterEach(() => {
-    eslox = null
-  })
-
-  it('should read files', () => {
-    const result = eslox.runFile(path.resolve(__dirname, './test.eslox'))
-    expect(result).toEqual(true)
   })
 })

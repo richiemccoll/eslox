@@ -75,9 +75,17 @@ class Assignment {
   }
 }
 
+class Block {
+  constructor(statements, context = 'regular') {
+    this.statements = statements
+    this.context = context
+  }
+}
+
 export {
   Assignment,
   Binary,
+  Block,
   Grouping,
   Literal,
   PrintStmt,

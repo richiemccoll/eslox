@@ -2,6 +2,7 @@ import { TokenType } from './constants/token-type.js'
 import {
   Assignment,
   Binary,
+  Block,
   Grouping,
   Literal,
   PrintStmt,
@@ -62,9 +63,25 @@ export class Parser {
       return this._print()
     }
 
+    if (this._match(TokenType.LEFT_BRACE)) {
+      return new Block(this._block())
+    }
+
     const exp = this._expression()
     this._consume(TokenType.SEMICOLON, 'Expect ; after expression')
     return new Stmt(exp)
+  }
+
+  _block() {
+    const statements = []
+
+    while (!this._check(TokenType.RIGHT_BRACE) && !this._isAtEnd()) {
+      statements.push(this._declaration())
+    }
+
+    this._consume(TokenType.RIGHT_BRACE, 'Expect } after block')
+
+    return statements
   }
 
   _print() {

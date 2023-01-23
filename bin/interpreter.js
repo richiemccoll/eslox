@@ -1,6 +1,7 @@
 import {
   Assignment,
   Binary,
+  Block,
   Literal,
   PrintStmt,
   Stmt,
@@ -128,7 +129,28 @@ export class Interpreter {
     return null
   }
 
+  _visitBlock(exp) {
+    this._interpretBlock(exp, new Environment(this.environment))
+  }
+
+  _interpretBlock(block, env) {
+    const prev = this.environment
+    try {
+      this.environment = env
+      for (let statement of block.statements) {
+        this.interpret(statement)
+      }
+      this.environment = prev
+    } catch (error) {
+      this.environment = prev
+      throw error
+    }
+  }
+
   _evaluate(exp) {
+    if (exp instanceof Block) {
+      return this._visitBlock(exp)
+    }
     if (exp instanceof Assignment) {
       return this._visitAssignment(exp)
     }
