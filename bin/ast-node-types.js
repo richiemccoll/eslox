@@ -90,6 +90,14 @@ class IfStmt {
   }
 }
 
+class Logical {
+  constructor(left, operator, right) {
+    this.left = left
+    this.operator = operator
+    this.right = right
+  }
+}
+
 export {
   Assignment,
   Binary,
@@ -97,6 +105,7 @@ export {
   Grouping,
   IfStmt,
   Literal,
+  Logical,
   PrintStmt,
   Stmt,
   Unary,

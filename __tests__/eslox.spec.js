@@ -304,4 +304,12 @@ describe('ESLox - run()', () => {
     const result = eslox.run(`print a;`)
     expect(result).toEqual(2)
   })
+
+  it('should handle short circuit or conditional control flow', () => {
+    const left = eslox.run(`print "hi" or 2;`)
+    expect(left).toEqual('hi')
+
+    const right = eslox.run(`print nil or "yes";`)
+    expect(right).toEqual('yes')
+  })
 })

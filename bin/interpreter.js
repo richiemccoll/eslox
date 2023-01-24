@@ -4,6 +4,7 @@ import {
   Block,
   IfStmt,
   Literal,
+  Logical,
   PrintStmt,
   Stmt,
   Unary,
@@ -156,6 +157,20 @@ export class Interpreter {
     return null
   }
 
+  _visitLogical(exp) {
+    const left = this._evaluate(exp.left)
+
+    if (exp.operator.type === TokenType.OR) {
+      if (left !== TokenType.NIL && left) {
+        return left
+      } else if (!left) {
+        return left
+      }
+    }
+
+    return this._evaluate(exp.right)
+  }
+
   _evaluate(exp) {
     if (exp instanceof Block) {
       return this._visitBlock(exp)
@@ -189,6 +204,9 @@ export class Interpreter {
     }
     if (exp instanceof IfStmt) {
       return this._visitIfStatement(exp)
+    }
+    if (exp instanceof Logical) {
+      return this._visitLogical(exp)
     }
   }
 

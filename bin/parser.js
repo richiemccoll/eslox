@@ -6,6 +6,7 @@ import {
   Grouping,
   IfStmt,
   Literal,
+  Logical,
   PrintStmt,
   Stmt,
   Unary,
@@ -128,7 +129,8 @@ export class Parser {
   }
 
   _assignment() {
-    const exp = this._equality()
+    const exp = this._or()
+
     if (this._match(TokenType.EQUAL)) {
       const equals = this._previous()
       const value = this._assignment()
@@ -137,6 +139,30 @@ export class Parser {
         return new Assignment(name, value)
       }
       throw ParseError(equals, 'Invalid assignment')
+    }
+
+    return exp
+  }
+
+  _or() {
+    let exp = this._and()
+
+    while (this._match(TokenType.OR)) {
+      const operator = this._previous()
+      const right = this._and()
+      exp = new Logical(exp, operator, right)
+    }
+
+    return exp
+  }
+
+  _and() {
+    let exp = this._equality()
+
+    while (this._match(TokenType.AND)) {
+      const operator = this._previous()
+      const right = this._equality()
+      exp = new Logical(exp, operator, right)
     }
 
     return exp
