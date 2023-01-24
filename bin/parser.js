@@ -4,6 +4,7 @@ import {
   Binary,
   Block,
   Grouping,
+  IfStmt,
   Literal,
   PrintStmt,
   Stmt,
@@ -59,6 +60,10 @@ export class Parser {
   }
 
   _statement() {
+    if (this._match(TokenType.IF)) {
+      return this._ifStatement()
+    }
+
     if (this._match(TokenType.PRINT)) {
       return this._print()
     }
@@ -101,6 +106,21 @@ export class Parser {
     }
     this._consume(TokenType.SEMICOLON, 'Expect ; after expression')
     return new VarStmt(name, initializer)
+  }
+
+  _ifStatement() {
+    this._consume(TokenType.LEFT_PAREN, 'Expect ( after if statement')
+    const condition = this._expression()
+    this._consume(TokenType.RIGHT_PAREN, 'Expect ) after condition')
+
+    const thenBranch = this._statement()
+    let elseBranch = null
+
+    if (this._match(TokenType.ELSE)) {
+      elseBranch = this._statement()
+    }
+
+    return new IfStmt(condition, thenBranch, elseBranch)
   }
 
   _expression() {

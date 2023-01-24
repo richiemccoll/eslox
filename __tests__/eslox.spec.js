@@ -297,4 +297,11 @@ describe('ESLox - run()', () => {
     const result = eslox.run(`print a;`)
     expect(result).toEqual(2)
   })
+
+  it('should handle if statement control flow', () => {
+    eslox.run(`var a = 1;`)
+    eslox.run(`if (true) { var a = 2; }`)
+    const result = eslox.run(`print a;`)
+    expect(result).toEqual(2)
+  })
 })

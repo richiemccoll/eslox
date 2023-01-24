@@ -2,6 +2,7 @@ import {
   Assignment,
   Binary,
   Block,
+  IfStmt,
   Literal,
   PrintStmt,
   Stmt,
@@ -137,14 +138,22 @@ export class Interpreter {
     const prev = this.environment
     try {
       this.environment = env
-      for (let statement of block.statements) {
-        this.interpret(statement)
-      }
+      this.interpret(block.statements)
       this.environment = prev
     } catch (error) {
       this.environment = prev
       throw error
     }
+  }
+
+  _visitIfStatement(stmt) {
+    if (this._evaluate(stmt.condition)) {
+      this._execute(stmt.thenBranch)
+    } else if (stmt.elseBranch !== null) {
+      this._execute(stmt.elseBranch)
+    }
+
+    return null
   }
 
   _evaluate(exp) {
@@ -177,6 +186,9 @@ export class Interpreter {
     }
     if (exp instanceof Binary) {
       return this._visitBinary(exp)
+    }
+    if (exp instanceof IfStmt) {
+      return this._visitIfStatement(exp)
     }
   }
 

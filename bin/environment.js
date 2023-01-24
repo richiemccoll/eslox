@@ -10,7 +10,7 @@ class Environment {
     this.values.set(name, value)
 
     if (this.enclosing !== null) {
-      return this.enclosing.set(name, value)
+      return this.enclosing.values.set(name, value)
     }
   }
 
@@ -22,7 +22,7 @@ class Environment {
     // Walk the scope chain by checking each
     // enclosing scope
     if (this.enclosing !== null) {
-      return this.enclosing.get(name)
+      return this.enclosing.values.get(name)
     }
 
     // If we've walked the scope chain and there the variable

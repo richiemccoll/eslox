@@ -82,11 +82,20 @@ class Block {
   }
 }
 
+class IfStmt {
+  constructor(condition, thenBranch, elseBranch) {
+    this.condition = condition
+    this.thenBranch = thenBranch
+    this.elseBranch = elseBranch
+  }
+}
+
 export {
   Assignment,
   Binary,
   Block,
   Grouping,
+  IfStmt,
   Literal,
   PrintStmt,
   Stmt,
