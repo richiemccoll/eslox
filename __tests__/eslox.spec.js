@@ -312,4 +312,11 @@ describe('ESLox - run()', () => {
     const right = eslox.run(`print nil or "yes";`)
     expect(right).toEqual('yes')
   })
+
+  it('should handle while statement control flows', () => {
+    eslox.run(`var a = 1;`)
+    eslox.run(`while (a < 3) { var a = a + 1; }`)
+    const result = eslox.run(`print a;`)
+    expect(result).toEqual(3)
+  })
 })

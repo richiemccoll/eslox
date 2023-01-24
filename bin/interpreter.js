@@ -9,7 +9,8 @@ import {
   Stmt,
   Unary,
   Var,
-  VarStmt
+  VarStmt,
+  WhileStmt
 } from './ast-node-types.js'
 import { TokenType } from './constants/token-type.js'
 import { Environment } from './environment.js'
@@ -157,6 +158,13 @@ export class Interpreter {
     return null
   }
 
+  _visitWhileStatement(stmt) {
+    while (this._evaluate(stmt.condition)) {
+      this._execute(stmt.body)
+    }
+    return null
+  }
+
   _visitLogical(exp) {
     const left = this._evaluate(exp.left)
 
@@ -207,6 +215,9 @@ export class Interpreter {
     }
     if (exp instanceof Logical) {
       return this._visitLogical(exp)
+    }
+    if (exp instanceof WhileStmt) {
+      return this._visitWhileStatement(exp)
     }
   }
 

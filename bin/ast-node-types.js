@@ -98,6 +98,13 @@ class Logical {
   }
 }
 
+class WhileStmt {
+  constructor(condition, body) {
+    this.condition = condition
+    this.body = body
+  }
+}
+
 export {
   Assignment,
   Binary,
@@ -110,5 +117,6 @@ export {
   Stmt,
   Unary,
   Var,
-  VarStmt
+  VarStmt,
+  WhileStmt
 }

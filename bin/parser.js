@@ -11,7 +11,8 @@ import {
   Stmt,
   Unary,
   Var,
-  VarStmt
+  VarStmt,
+  WhileStmt
 } from './ast-node-types.js'
 import { ParseError } from './errors.js'
 
@@ -69,6 +70,10 @@ export class Parser {
       return this._print()
     }
 
+    if (this._match(TokenType.WHILE)) {
+      return this._whileStatement()
+    }
+
     if (this._match(TokenType.LEFT_BRACE)) {
       return new Block(this._block())
     }
@@ -122,6 +127,15 @@ export class Parser {
     }
 
     return new IfStmt(condition, thenBranch, elseBranch)
+  }
+
+  _whileStatement() {
+    this._consume(TokenType.LEFT_PAREN, 'Expect ( after while statement')
+    const condition = this._expression()
+    this._consume(TokenType.RIGHT_PAREN, 'Expect ) after while condition')
+
+    const body = this._statement()
+    return new WhileStmt(condition, body)
   }
 
   _expression() {
