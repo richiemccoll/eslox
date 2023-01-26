@@ -62,6 +62,10 @@ export class Parser {
   }
 
   _statement() {
+    if (this._match(TokenType.FOR)) {
+      return this._forLoop()
+    }
+
     if (this._match(TokenType.IF)) {
       return this._ifStatement()
     }
@@ -136,6 +140,50 @@ export class Parser {
 
     const body = this._statement()
     return new WhileStmt(condition, body)
+  }
+
+  _forLoop() {
+    this._consume(TokenType.LEFT_PAREN, 'Expect ( after for "for"')
+
+    let initializer
+
+    if (this._match(TokenType.SEMICOLON)) {
+      initializer = null
+    } else if (this._match(TokenType.VAR)) {
+      initializer = this._varDeclaration()
+    } else {
+      initializer = this._expression()
+    }
+
+    let condition = null
+    if (!this._check(TokenType.SEMICOLON)) {
+      condition = this._expression()
+    }
+    this._consume(TokenType.SEMICOLON, 'Expect ; after loop condition')
+
+    let increment = null
+    if (!this._check(TokenType.RIGHT_PAREN)) {
+      increment = this._expression()
+    }
+    this._consume(TokenType.RIGHT_PAREN, 'Expect ) after "for" clauses')
+
+    let body = this._statement()
+
+    if (increment) {
+      body = new Block([body, new Stmt(increment)])
+    }
+
+    if (!condition) {
+      condition = new Literal(true)
+    }
+
+    body = new WhileStmt(condition, body)
+
+    if (initializer) {
+      body = new Block([initializer, body])
+    }
+
+    return body
   }
 
   _expression() {
