@@ -2,6 +2,7 @@ import {
   Assignment,
   Binary,
   Block,
+  Call,
   IfStmt,
   Literal,
   Logical,
@@ -179,7 +180,24 @@ export class Interpreter {
     return this._evaluate(exp.right)
   }
 
+  _visitCall(exp) {
+    const callee = this._evaluate(exp)
+    const args = []
+    exp.arguments.forEach(arg => {
+      args.push(this._evaluate(arg))
+    })
+
+    if (!callee.call) {
+      throw new RuntimeError('Can only call functions and classes')
+    }
+
+    return callee.call(this, args)
+  }
+
   _evaluate(exp) {
+    if (exp instanceof Call) {
+      return this._visitCall(exp)
+    }
     if (exp instanceof Block) {
       return this._visitBlock(exp)
     }

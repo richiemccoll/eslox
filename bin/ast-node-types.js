@@ -105,10 +105,36 @@ class WhileStmt {
   }
 }
 
+class Call {
+  constructor(callee, paren, args) {
+    this.callee = callee
+    this.paren = paren
+    this.arguments = args
+  }
+}
+
+class Callable {
+  constructor(interpreter, args) {
+    this.interpreter = interpreter
+    this.args = args
+  }
+}
+
+class Func {
+  constructor(name, params, body) {
+    this.name = name
+    this.params = params
+    this.body = body
+  }
+}
+
 export {
   Assignment,
   Binary,
   Block,
+  Call,
+  Callable,
+  Func,
   Grouping,
   IfStmt,
   Literal,

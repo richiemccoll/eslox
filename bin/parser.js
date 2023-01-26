@@ -3,6 +3,8 @@ import {
   Assignment,
   Binary,
   Block,
+  Call,
+  Func,
   Grouping,
   IfStmt,
   Literal,
@@ -50,6 +52,9 @@ export class Parser {
 
   _declaration() {
     try {
+      if (this._match(TokenType.FUN)) {
+        return this._func()
+      }
       if (this._match(TokenType.VAR)) {
         return this._varDeclaration()
       }
@@ -186,6 +191,28 @@ export class Parser {
     return body
   }
 
+  _func(kind = 'function') {
+    const name = this._consume(TokenType.IDENTIFIER, `Expect ${kind} name`)
+    this._consume(TokenType.LEFT_PAREN, `Expect ( after ${kind}`)
+
+    const args = []
+    if (!this._check(TokenType.RIGHT_PAREN)) {
+      do {
+        if (args.length >= 255) {
+          // Don't throw - allow the parser to keep parsing
+          this._error(this._peek(), 'Cannot have more than 255 arguments.')
+        }
+        args.push(this._expression())
+      } while (this._match(TokenType.COMMA))
+    }
+
+    this._consume(TokenType.RIGHT_PAREN, 'Expect ) after arguments')
+    this._consume(TokenType.LEFT_BRACE, `Expect { after ${kind}`)
+    const body = this._block()
+
+    return new Func(name, args, body)
+  }
+
   _expression() {
     return this._assignment()
   }
@@ -271,7 +298,7 @@ export class Parser {
       return new Unary({ operator, right })
     }
 
-    return this._primary()
+    return this._call()
   }
 
   _primary() {
@@ -298,6 +325,38 @@ export class Parser {
       return new Grouping(exp)
     }
     throw this._error(this._peek(), 'Expect expression')
+  }
+
+  _call() {
+    let exp = this._primary()
+
+    while (true) {
+      if (this._match(TokenType.LEFT_PAREN)) {
+        exp = this._finishCall(exp)
+      } else {
+        break
+      }
+    }
+
+    return exp
+  }
+
+  _finishCall(exp) {
+    const args = []
+    if (!this._check(TokenType.RIGHT_PAREN)) {
+      do {
+        if (args.length >= 255) {
+          // Don't throw - allow the parser to keep parsing
+          this._error(this._peek(), 'Cannot have more than 255 arguments.')
+        }
+        args.push(this._expression())
+      } while (this._match(TokenType.COMMA))
+    }
+    const paren = this._consume(
+      TokenType.RIGHT_PAREN,
+      'Expect ) after arguments'
+    )
+    return new Call(exp, paren, args)
   }
 
   _consume(tokenType, message) {
