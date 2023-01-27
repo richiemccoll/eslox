@@ -10,6 +10,7 @@ import {
   Literal,
   Logical,
   PrintStmt,
+  Return,
   Stmt,
   Unary,
   Var,
@@ -79,6 +80,10 @@ export class Parser {
       return this._print()
     }
 
+    if (this._match(TokenType.RETURN)) {
+      return this._return()
+    }
+
     if (this._match(TokenType.WHILE)) {
       return this._whileStatement()
     }
@@ -108,6 +113,16 @@ export class Parser {
     const value = this._expression()
     this._consume(TokenType.SEMICOLON, 'Expect ; after value')
     return new PrintStmt(value)
+  }
+
+  _return() {
+    const keyword = this._previous()
+    let value = null
+    if (!this._check(TokenType.SEMICOLON)) {
+      value = this._expression()
+    }
+    this._consume(TokenType.SEMICOLON, 'Expected ; after return statement')
+    return new Return(keyword, value)
   }
 
   _varDeclaration() {

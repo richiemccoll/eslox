@@ -9,6 +9,7 @@ import {
   Literal,
   Logical,
   PrintStmt,
+  Return,
   Stmt,
   Unary,
   Var,
@@ -17,7 +18,7 @@ import {
 } from './ast-node-types.js'
 import { TokenType } from './constants/token-type.js'
 import { Environment } from './environment.js'
-import { RuntimeError } from './errors.js'
+import { ReturnError, RuntimeError } from './errors.js'
 
 export class Interpreter {
   constructor({ onError }) {
@@ -148,8 +149,9 @@ export class Interpreter {
     const prev = this.environment
     try {
       this.environment = env
-      this.interpret(block.statements)
+      let result = this.interpret(block.statements)
       this.environment = prev
+      return result
     } catch (error) {
       this.environment = prev
       throw error
@@ -206,7 +208,18 @@ export class Interpreter {
     this.environment.define(exp.name.lexeme, fn)
   }
 
+  _visitReturn(exp) {
+    let value = null
+    if (exp.value) {
+      value = this._evaluate(exp.value)
+    }
+    throw new ReturnError(value)
+  }
+
   _evaluate(exp) {
+    if (exp instanceof Return) {
+      return this._visitReturn(exp)
+    }
     if (exp instanceof Func) {
       return this._visitFunction(exp)
     }
@@ -262,8 +275,12 @@ export class Interpreter {
         }
       }
     } catch (error) {
-      // TODO - how to get the line number?
-      this.onError(0, error.message)
+      if (error instanceof ReturnError) {
+        return error.value
+      } else {
+        // TODO - how to get the line number?
+        this.onError(0, error.message)
+      }
     }
   }
 

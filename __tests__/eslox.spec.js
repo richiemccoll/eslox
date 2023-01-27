@@ -325,4 +325,10 @@ describe('ESLox - run()', () => {
     const result = eslox.run(`print test;`)
     expect(result).toEqual('<test()>')
   })
+
+  it('should handle the ability to return values from functions', () => {
+    eslox.run(`fun calc(){ return 2 * 2; }`)
+    const result = eslox.run(`print calc();`)
+    expect(result).toEqual(4)
+  })
 })

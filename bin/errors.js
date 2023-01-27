@@ -9,3 +9,9 @@ export class RuntimeError {
     this.message = message
   }
 }
+
+export class ReturnError {
+  constructor(val) {
+    this.value = val
+  }
+}

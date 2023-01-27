@@ -128,10 +128,11 @@ class Callable {
     }
 
     try {
-      interpreter.interpretBlock(
+      const block = interpreter.interpretBlock(
         { statements: this.declaration.body },
         environment
       )
+      return block
     } catch (error) {
       console.error(error)
     }
@@ -151,6 +152,13 @@ class Func {
   }
 }
 
+class Return {
+  constructor(keyword, value) {
+    this.keyword = keyword
+    this.value = value
+  }
+}
+
 export {
   Assignment,
   Binary,
@@ -163,6 +171,7 @@ export {
   Literal,
   Logical,
   PrintStmt,
+  Return,
   Stmt,
   Unary,
   Var,
