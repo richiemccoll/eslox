@@ -319,4 +319,10 @@ describe('ESLox - run()', () => {
     const result = eslox.run(`print a;`)
     expect(result).toEqual(3)
   })
+
+  it('should handle the ability to define no-op functions', () => {
+    eslox.run(`fun test(){}`)
+    const result = eslox.run(`print test;`)
+    expect(result).toEqual('<test()>')
+  })
 })

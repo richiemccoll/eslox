@@ -3,6 +3,8 @@ import {
   Binary,
   Block,
   Call,
+  Callable,
+  Func,
   IfStmt,
   Literal,
   Logical,
@@ -111,6 +113,11 @@ export class Interpreter {
 
   _visitPrintStmt(exp) {
     const value = this._evaluate(exp.expression)
+    if (value instanceof Callable) {
+      const output = value.toString()
+      console.log(output)
+      return output
+    }
     console.log(JSON.stringify(value))
     return value
   }
@@ -134,10 +141,10 @@ export class Interpreter {
   }
 
   _visitBlock(exp) {
-    this._interpretBlock(exp, new Environment(this.environment))
+    this.interpretBlock(exp, new Environment(this.environment))
   }
 
-  _interpretBlock(block, env) {
+  interpretBlock(block, env) {
     const prev = this.environment
     try {
       this.environment = env
@@ -181,7 +188,7 @@ export class Interpreter {
   }
 
   _visitCall(exp) {
-    const callee = this._evaluate(exp)
+    const callee = this._evaluate(exp.callee)
     const args = []
     exp.arguments.forEach(arg => {
       args.push(this._evaluate(arg))
@@ -194,7 +201,15 @@ export class Interpreter {
     return callee.call(this, args)
   }
 
+  _visitFunction(exp) {
+    const fn = new Callable(exp, this.environment)
+    this.environment.define(exp.name.lexeme, fn)
+  }
+
   _evaluate(exp) {
+    if (exp instanceof Func) {
+      return this._visitFunction(exp)
+    }
     if (exp instanceof Call) {
       return this._visitCall(exp)
     }
@@ -241,8 +256,10 @@ export class Interpreter {
 
   interpret(statements) {
     try {
-      for (let statement of statements) {
-        return this._execute(statement)
+      if (Array.isArray(statements)) {
+        for (let statement of statements) {
+          return this._execute(statement)
+        }
       }
     } catch (error) {
       // TODO - how to get the line number?

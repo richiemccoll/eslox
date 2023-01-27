@@ -1,3 +1,5 @@
+import { Environment } from './environment.js'
+
 class Binary {
   constructor({ left, operator, right }) {
     this.left = left
@@ -114,9 +116,27 @@ class Call {
 }
 
 class Callable {
-  constructor(interpreter, args) {
-    this.interpreter = interpreter
-    this.args = args
+  constructor(declaration, closure) {
+    this.declaration = declaration
+    this.closure = closure
+  }
+
+  call(interpreter, args) {
+    const environment = new Environment(this.closure)
+    for (let i = 0; i < this.declaration.params.length; i++) {
+      environment.define(this.declaration.params[i], args[i])
+    }
+
+    try {
+      interpreter.interpretBlock(this.declaration.body, environment)
+    } catch (error) {
+      console.error(error)
+    }
+    return null
+  }
+
+  toString() {
+    return `<${this.declaration.name.lexeme}()>`
   }
 }
 
