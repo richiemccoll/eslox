@@ -124,7 +124,7 @@ class Callable {
   call(interpreter, args) {
     const environment = new Environment(this.closure)
     for (let i = 0; i < this.declaration.params.length; i++) {
-      environment.define(this.declaration.params[i], args[i])
+      environment.define(this.declaration.params[i].name.lexeme, args[i])
     }
 
     try {
