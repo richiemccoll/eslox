@@ -128,7 +128,10 @@ class Callable {
     }
 
     try {
-      interpreter.interpretBlock(this.declaration.body, environment)
+      interpreter.interpretBlock(
+        { statements: this.declaration.body },
+        environment
+      )
     } catch (error) {
       console.error(error)
     }
