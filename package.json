@@ -21,7 +21,7 @@
     "crafting-interpreters"
   ],
   "author": "Richie McColl",
-  "license": "ISC",
+  "license": "MIT",
   "description": "ECMAScript implementation of lox language from Crafting Interpreters book",
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
